@@ -1,11 +1,26 @@
 use std::{io, cmp::Ordering};
 use rand::Rng;
 fn main() {
-    let correct = rand::thread_rng().gen_range(1..=10);
-    println!("correct {correct}!");
-    println!("Guess the number 1..10!");
+    let mut how_many = String::new();
+    println!("How many random number do you want yo Guess?");
+    io::stdin()
+    .read_line(&mut how_many)
+    .expect("Error reading input");
+
+    let num_guesses:u8 = how_many.trim().parse().expect("Error reading input");
     
-    loop {
+    let mut correct=Vec::new();
+    for _ in 0..num_guesses{
+        correct.push(rand::thread_rng().gen_range(1..=10));
+    }
+
+    
+    println!("correct {correct:?}!");
+    
+    let mut guesses_made=0;
+    while guesses_made<num_guesses {
+        println!("Guess the number 1..10!");    
+        
         let mut guess = String::new();
         io::stdin()
         .read_line(&mut guess)
@@ -28,15 +43,21 @@ fn main() {
             // String::from("You guess: correct")
             "You guess: correct"
         }; */
-        let  message =  match guess.cmp(&correct) {
-            Ordering::Greater =>"You guess to high",
-            Ordering::Less =>"You guess to low",
+        match guess.cmp(&correct[guesses_made as usize]) {
+            Ordering::Greater =>println!("You guess to high"),
+            Ordering::Less =>println!("You guess to low"),
             Ordering::Equal =>{
                 println!("You guess: correct");
-                break;
+                guesses_made += 1;
+                if guesses_made<num_guesses{
+                    println!("One more play");
+                }
             }
         }; 
-        println!("{message}");
+    }
+    println!("thanks for playing. The correct answers were:");
+    for item in correct{
+        println!("{item}");
     }
 }
 
